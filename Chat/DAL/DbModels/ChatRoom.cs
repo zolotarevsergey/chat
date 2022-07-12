@@ -12,7 +12,7 @@ namespace DAL.DbModels
 
         public string Name { get; set; }
 
-        public ICollection<ChatRoomChatUser> ChatRoomChatUsers { get; set; }
+        public ICollection<ChatUser> ChatUsers { get; set; }
 
         public ICollection<ChatMessage> ChatMessages { get; set; }
     }

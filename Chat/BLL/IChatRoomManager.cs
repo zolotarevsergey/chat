@@ -10,7 +10,7 @@ namespace BLL
         Task<ChatRoom> GetChatRoomByIdAsync(int id);
         Task<ChatRoom> CreateChatRoomAsync(ChatRoom room);
         Task<ChatRoom> GetChatRoomByNameAsync(string name);
-        Task<ChatRoomChatUser> AddUserToChatRoomAsync(ChatRoomChatUser roomUser);
-        Task RemoveUserFromChatRoomAsync(ChatRoomChatUser roomUser);
+        Task AddUserToChatRoomAsync(int chatRoomId, int chatUserId);
+        Task RemoveUserFromChatRoomAsync(int chatRoomId, int chatUserId);
     }
 }

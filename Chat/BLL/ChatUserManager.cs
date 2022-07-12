@@ -18,7 +18,7 @@ namespace BLL
         public async Task<ChatUser> CreateChatUserAsync(ChatUser user)
         {
             var userExists = await _context.ChatUsers.AnyAsync(x => x.Name == user.Name);
-            if (!userExists)
+            if (userExists)
             {
                 throw new CustomException("Such user already exists.");
             }

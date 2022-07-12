@@ -26,7 +26,7 @@ namespace BLL
         {
             return await _context.ChatRooms
                 .Include(x => x.ChatMessages)
-                .Include(x => x.ChatRoomChatUsers)
+                .Include(x => x.ChatUsers)
                 .FirstOrDefaultAsync(x => x.ChatRoomId == id);
         }
 
@@ -48,54 +48,53 @@ namespace BLL
             return result.Entity;
         }
 
-        public async Task<ChatRoomChatUser> AddUserToChatRoomAsync(ChatRoomChatUser roomUser)
+        public async Task AddUserToChatRoomAsync(int chatRoomId, int chatUserId)
         {
-            var roomExists = await _context.ChatRooms.AnyAsync(x => x.ChatRoomId == roomUser.ChatRoomId);
-            if (!roomExists)
+            var existingRoom = await _context.ChatRooms.Include(x => x.ChatUsers).FirstOrDefaultAsync(x => x.ChatRoomId == chatRoomId);
+            if (existingRoom == null)
             {
                 throw new CustomException("Such room doesn't exists!");
             }
 
-            var userExists = await _context.ChatUsers.AnyAsync(x => x.ChatUserId == roomUser.ChatUserId);
-            if (!userExists)
+            var existingUser = await _context.ChatUsers.FirstOrDefaultAsync(x => x.ChatUserId == chatUserId);
+            if (existingUser == null)
             {
                 throw new CustomException("Such user doesn't exists!");
             }
 
-            var roomUserExists = await _context.ChatRoomChatUsers.AnyAsync(x => x.ChatUserId == roomUser.ChatUserId &&
-                        x.ChatRoomId == roomUser.ChatRoomId);
-            if (roomUserExists)
+            var existingLink = existingRoom.ChatUsers.Any(x => x.ChatUserId == chatUserId);
+            if (existingLink)
             {
                 throw new CustomException("User already exists in this room.");
             }
 
-            var result = await _context.ChatRoomChatUsers.AddAsync(roomUser);
+            existingRoom.ChatUsers.Add(existingUser);
+            _context.ChatRooms.Update(existingRoom);
             await _context.SaveChangesAsync();
-            return result.Entity;
         }
 
-        public async Task RemoveUserFromChatRoomAsync(ChatRoomChatUser roomUser)
+        public async Task RemoveUserFromChatRoomAsync(int chatRoomId, int chatUserId)
         {
-            var roomExists = await _context.ChatRooms.AnyAsync(x => x.ChatRoomId == roomUser.ChatRoomId);
-            if (!roomExists)
+            var existingRoom = await _context.ChatRooms.Include(x => x.ChatUsers).FirstOrDefaultAsync(x => x.ChatRoomId == chatRoomId);
+            if (existingRoom == null)
             {
                 throw new CustomException("Such room doesn't exists!");
             }
 
-            var userExists = await _context.ChatUsers.AnyAsync(x => x.ChatUserId == roomUser.ChatUserId);
-            if (!userExists)
+            var existingUser = await _context.ChatUsers.FirstOrDefaultAsync(x => x.ChatUserId == chatUserId);
+            if (existingUser == null)
             {
                 throw new CustomException("Such user doesn't exists!");
             }
 
-            var existingUser = await _context.ChatRoomChatUsers.FirstOrDefaultAsync(x => x.ChatUserId == roomUser.ChatUserId &&
-                        x.ChatRoomId == roomUser.ChatRoomId);
-            if (existingUser == null)
+            var existingLink = existingRoom.ChatUsers.Any(x => x.ChatUserId == chatUserId);
+            if (!existingLink)
             {
-                throw new CustomException("User doesn't exist in this room!");
+                throw new CustomException("User doesn't linked in this room.");
             }
 
-            var result = _context.ChatRoomChatUsers.Remove(existingUser);
+            existingRoom.ChatUsers.Remove(existingUser);
+            _context.ChatRooms.Update(existingRoom);
             await _context.SaveChangesAsync();
         }
     }

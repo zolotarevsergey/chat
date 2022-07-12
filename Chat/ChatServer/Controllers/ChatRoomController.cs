@@ -53,12 +53,12 @@ namespace ChatServer.Controllers
 
         [HttpPost]
         [Route("linkUser")]
-        public async Task<ActionResult<ChatRoomChatUserDto>> LinkUser(ChatRoomChatUserDto room)
+        public async Task<ActionResult> LinkUser(ChatRoomChatUserDto dto)
         {
             try
             {
-                var result = await _chatRoomManager.AddUserToChatRoomAsync(_mapper.Map<ChatRoomChatUser>(room));
-                return _mapper.Map<ChatRoomChatUserDto>(result);
+                await _chatRoomManager.AddUserToChatRoomAsync(dto.ChatRoomId, dto.ChatUserId);
+                return Ok();
             }
             catch (CustomException e)
             {
@@ -68,11 +68,11 @@ namespace ChatServer.Controllers
 
         [HttpPost]
         [Route("unlinkUser")]
-        public async Task<ActionResult> UnlinkUser(ChatRoomChatUserDto room)
+        public async Task<ActionResult> UnlinkUser(ChatRoomChatUserDto dto)
         {
             try
             {
-                await _chatRoomManager.RemoveUserFromChatRoomAsync(_mapper.Map<ChatRoomChatUser>(room));
+                await _chatRoomManager.RemoveUserFromChatRoomAsync(dto.ChatRoomId, dto.ChatUserId);
                 return Ok();
             }
             catch (CustomException e)

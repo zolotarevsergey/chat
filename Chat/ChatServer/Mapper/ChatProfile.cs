@@ -15,12 +15,10 @@ namespace ChatServer.Mapper
                     dest => dest.ChatUserName,
                     opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty)
                 );
-            CreateMap<ChatRoomChatUser, ChatRoomChatUserDto>();
 
             CreateMap<ChatUserDto, ChatUser>();
             CreateMap<ChatRoomDto, ChatRoom>();
             CreateMap<ChatMessageDto, ChatMessage>();
-            CreateMap<ChatRoomChatUserDto, ChatRoomChatUser>();
         }
     }
 }
