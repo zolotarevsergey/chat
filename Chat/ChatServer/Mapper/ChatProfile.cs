@@ -10,7 +10,11 @@ namespace ChatServer.Mapper
         {
             CreateMap<ChatUser, ChatUserDto>();
             CreateMap<ChatRoom, ChatRoomDto>();
-            CreateMap<ChatMessage, ChatMessageDto>();
+            CreateMap<ChatMessage, ChatMessageDto>()
+                .ForMember(
+                    dest => dest.ChatUserName,
+                    opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty)
+                );
             CreateMap<ChatRoomChatUser, ChatRoomChatUserDto>();
 
             CreateMap<ChatUserDto, ChatUser>();

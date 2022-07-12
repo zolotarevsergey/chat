@@ -12,6 +12,8 @@ namespace ChatServer.Dto
         [Required]
         public int ChatUserId { get; set; }
 
+        public string ChatUserName { get; set; }
+
         [Required]
         public string Message { get; set; }
     }
